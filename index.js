@@ -44,7 +44,6 @@ app.use(cors(corsOptions));
 //     return zhuyin.toString().replace(/,/ig, '').split('').reduce((res, val) => res + dict[val], '');
 // };
 
-
 // 前端傳資料用
 const bodyParser = require("body-parser");
 
@@ -58,10 +57,10 @@ const db = require(__dirname + "/modules/mysql2");
 const upload = require(__dirname + "/modules/img-upload.js");
 const jwt = require("jsonwebtoken");
 
-// 0728 自訂 middleware JWT authorization
+// 自訂 middleware JWT authorization
 app.use((req, res, next) => {
-  res.locals.nickname = "小新";
-  res.locals.title = "小新的網站";
+  res.locals.nickname = "Group6";
+  res.locals.title = "Group6的網站";
 
   //template helper functions
   res.locals.toDateString = (d) => {
@@ -102,9 +101,8 @@ app.get("/", (req, res) => {
   res.send("<h1>This is template</h1>");
 });
 
-
 // 商品資料api
-app.use('/shop', require(__dirname + '/routes/products-api') );
+app.use("/shop", require(__dirname + "/routes/products-api"));
 
 //論壇資料api
 app.use("/forum", require(__dirname + "/routes/forum-api"));

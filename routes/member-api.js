@@ -94,7 +94,7 @@ router.use((req, res, next) => {
 //   //   res.render("members/index", output);
 // });
 
-// 會員登入 - 0711  密碼比對
+// 會員登入  密碼比對
 router.post("/login", async (req, res) => {
   const output = {
     success: false,
@@ -110,10 +110,11 @@ router.post("/login", async (req, res) => {
   const [rows] = await db.query(sql, [req.body.member_account]);
   if (!rows.length) {
     // 帳號是錯的
-    output.code = 402;
+    output.code = 402; // HTTP 狀態碼402 - Payment Required（需要付款）這裡用來識別而已 實作不適合
     output.error = "帳號或密碼錯誤";
     return res.json(output);
   }
+  // 檢查密碼
   const verified = await bcrypt.compare(
     req.body.member_password,
     rows[0].member_password
@@ -122,13 +123,14 @@ router.post("/login", async (req, res) => {
   // 最上面要 const bcrypt = require("bcryptjs");
   if (!verified) {
     // 密碼是錯的
-    output.code = 406;
+    output.code = 406; //HTTP 狀態碼 406 - Not Acceptable（不可接受）
     output.error = "帳號或密碼錯誤";
     return res.json(output);
   }
+
   output.success = true;
 
-  // 包 jwt 傳給前端 0711 {}包越多項目token越長 但下面也不一定要顯示
+  // 包 jwt 傳給前端 {}包越多項目token越長 但下面也不一定要顯示
   const token = jwt.sign(
     {
       id: rows[0].member_id,
@@ -151,7 +153,7 @@ router.post("/login", async (req, res) => {
 router.post("/signUp", multipartParser, async (req, res) => {
   // TODO: 要檢查欄位資料
 
-  // 0728 檢查 email 是否已存在
+  // 檢查 email 是否已存在
   const checkEmailQuery =
     "SELECT COUNT(*) AS count FROM `members` WHERE `member_account` = ?";
   const [emailResult] = await db.query(checkEmailQuery, [
@@ -186,7 +188,7 @@ router.post("/signUp", multipartParser, async (req, res) => {
 
   // let member_id = generateMemberId();
 
-  // 0728 讓生日格式一致
+  // 讓生日格式一致
   let birthday = dayjs(req.body.member_birthday);
   if (birthday.isValid()) {
     birthday = birthday.format("YYYY-MM-DD");
